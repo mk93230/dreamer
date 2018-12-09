@@ -17,6 +17,5 @@ fix.contractions <- function(doc) {
 
 # function to remove special characters
 removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]", " ", x)
-# remove special characters
-prince$lyrics <- sapply(prince$lyrics, removeSpecialChars)
+
 
