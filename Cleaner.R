@@ -9,6 +9,7 @@ fix.contractions <- function(doc) {
   doc <- gsub("'ve", " have", doc)
   doc <- gsub("'m", " am", doc)
   doc <- gsub("'d", " would", doc)
+  doc <- gsub("didn't", "did not", doc)
   # 's could be 'is' or could be possessive: it has no expansion
   doc <- gsub("'s", "", doc)
   return(doc)
