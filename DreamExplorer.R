@@ -63,4 +63,17 @@ head(dreamerWords)
 undesirable_words <- c("told", "looked", "started", "dream", 
                        "dreams", "completely","dreamed")
 dreamerWords_filtered<-dreamerWords %>% filter(!(word %in% stop_words$word)) %>% filter(!(word %in% undesirable_words)) %>% filter(year %in%2015) %>% count(word) %>% arrange(desc(n))
-wordcloud2(dreamerWords_filtered, size = .5)
+
+# word clouds for analysis
+#wordcloud2(dreamerWords_filtered, size = .5)
+
+# Words to set alarm
+alarm_words <- c("suicide", "die", "depressed", "kill")
+
+dreamerWords %>% filter(!(word %in% stop_words$word)) %>% filter((word %in% alarm_words))  %>% filter(year > 2010) %>% count(word,year) %>% ggplot(aes(year, n, color = word)) +
+  geom_line() +
+  geom_point() + 
+  ggtitle("People who needed attention") +
+  labs(x = "Year",
+       y = "Occurences",
+       color = "")
