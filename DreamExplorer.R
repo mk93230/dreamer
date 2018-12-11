@@ -6,6 +6,9 @@
 library(readr)
 library(knitr)
 library(tidyverse)
+library(tidytext)
+# word cloud libraries
+library(wordcloud2)
 
 # Including other source files
 source("Cleaner")
@@ -40,8 +43,9 @@ dreamer <- dreamer %>% filter(!is.na(dreamer$year))
 dreamer %>%
   group_by(year) %>%
   summarise(number_of_dreams = n()) %>%
-  ggplot(aes(x = year, y = number_of_dreams,color="red")) + 
-  geom_bar(stat = "identity")  +
+  ggplot(aes(x = year, y = number_of_dreams)) + 
+  #geom_bar(stat = "identity")  +
+  geom_line() + geom_point() +
   theme(plot.title = element_text(hjust = 0.5),
         legend.title = element_blank(),
         panel.grid.minor = element_blank()) +
@@ -49,3 +53,14 @@ dreamer %>%
   labs(x = "Year", y = "Number of Dreams")
 
 
+# Breaking the dreams to words
+dreamerWords <- dreamer%>%unnest_tokens(word,Scene1)
+head(dreamerWords)
+
+# Lets count the words, arrange them, by the way lets remove the standard words which 
+# are called as stop words
+# Also some undesirable words
+undesirable_words <- c("told", "looked", "started", "dream", 
+                       "dreams", "completely","dreamed")
+dreamerWords_filtered<-dreamerWords %>% filter(!(word %in% stop_words$word)) %>% filter(!(word %in% undesirable_words)) %>% filter(year %in%2015) %>% count(word) %>% arrange(desc(n))
+wordcloud2(dreamerWords_filtered, size = .5)
