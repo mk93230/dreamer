@@ -1,6 +1,9 @@
 # Install packages
 #install.packages("tidyverse")
 #install.packages("lubridate")
+#install.packages("tidytext")
+#install.packages("wordcloud2")
+#install.packages("readr")
 
 #load libraries
 library(readr)
@@ -9,11 +12,12 @@ library(tidyverse)
 library(tidytext)
 # word cloud libraries
 library(wordcloud2)
+library(lubridate)
 
 # Including other source files
-source("Cleaner")
-source("DataRetreiver")
-source("Utilities")
+source("Cleaner.R")
+source("DataRetreiver.R")
+source("Utilities.R")
 
 DreamExtract <- ExtractDreams()
 
