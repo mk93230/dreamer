@@ -1,3 +1,5 @@
+# Dream for wellness project - Kamal & Jeff O'Dell - We believe wellness is yours
+
 # Install packages
 #install.packages("tidyverse")
 #install.packages("lubridate")
@@ -27,9 +29,20 @@ library(circlize) #to create circle visuals
 library(plotly) #interactive ggplot graphs
 
 
+# Including other source files
+source("Cleaner.R")
+source("DataRetreiver.R")
+source("Utilities.R")
+
+
 
 #define some colors to use throughout
 my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00")
+
+# Capture all undesirable words from the dreamer
+
+undesirable_words <- c("told", "looked", "started", "dream", 
+                       "dreams", "completely","dreamed")
 
 #customize ggplot2's default theme settings
 #it's nice to have the options in this function
@@ -77,3 +90,48 @@ word_chart <- function(data, input, title) {
     #ggtitle(title) +
     coord_flip()
 }
+
+
+
+DreamExtract <- ExtractDreams()
+
+#str(DreamExtract[139, ]$Scene1, nchar.max = 1000)
+DreamExtract[139, ]$Scene1
+
+
+# fix (expand) contractions
+DreamExtract$Scene1 <- sapply(DreamExtract$Scene1, fix.contractions)
+
+# remove special characters
+DreamExtract$Scene1 <- sapply(DreamExtract$Scene1, removeSpecialChars)
+
+
+# convert everything to lower case
+DreamExtract$Scene1 <- sapply(DreamExtract$Scene1, tolower)
+
+# Check the work
+str(DreamExtract[139, ]$Scene1, nchar.max = 1000)
+
+dreamer <- DreamExtract %>% mutate(year=getYear(DreamExtract$Created_dDate))
+
+# Remove all NA's from the year by filtering the data
+dreamer <- dreamer %>% filter(!is.na(dreamer$year))
+
+
+# Breaking the dreams to words
+dreamerWords <- dreamer%>%unnest_tokens(word,Scene1)
+
+# remove the stop words. The stop words have a column called word, unnest tokens creates a column called word, it is easy to anti join them
+dreamerWords_stopwords_removed <- dreamerWords%>%anti_join(stop_words)
+
+# make the words distinct, remove the undesirable words and remove words that are less than 3 characters
+dreamerWords_tidy <- dreamerWords_stopwords_removed %>% distinct() %>% filter(!word %in% undesirable_words) %>% filter(nchar(word) >3)
+
+# the concept we will use for dreams is that, we will use the "name" as the document, scenes as multiple contents in a document
+# that is these scenes(each) could be one or more topics.
+# We will use the LDA for identifying words for the topics
+
+# KJ Model - Kamal/Jeff model
+#we can use probability to determine probability of words in a document and probability of topics in a document (this logic 
+# is one part of LDA.
+# in dreams schema we will use "name"
