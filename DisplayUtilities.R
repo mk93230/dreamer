@@ -1,7 +1,7 @@
 # Dream for Wellness - Kamal & Jeff
 # @author Kamal
 # utilities for display
-num_words <- 10
+
 
 # Create a function that accepts lda model and number of words
 
