@@ -33,6 +33,7 @@ library(plotly) #interactive ggplot graphs
 source("Cleaner.R")
 source("DataRetreiver.R")
 source("Utilities.R")
+source("DisplayUtilities.R")
 
 
 
@@ -42,7 +43,7 @@ my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00")
 # Capture all undesirable words from the dreamer
 
 undesirable_words <- c("told", "looked", "started", "dream", 
-                       "dreams", "completely","dreamed")
+                       "dreams", "completely","dreamed","ryan","left")
 
 #customize ggplot2's default theme settings
 #it's nice to have the options in this function
@@ -135,3 +136,32 @@ dreamerWords_tidy <- dreamerWords_stopwords_removed %>% distinct() %>% filter(!w
 #we can use probability to determine probability of words in a document and probability of topics in a document (this logic 
 # is one part of LDA.
 # in dreams schema we will use "name"
+
+dreamerWords_tidy$Name <- substr(dreamerWords_tidy$Name,1,8)
+# Create document term matrix
+dreamerWords_dtm_balanced <- dreamerWords_tidy %>%
+  # get word count per document/name to pass to cast_dtm
+  count(Name,word, sort=TRUE) %>%
+  ungroup() %>%
+  # create a DTM with docs/Name as rows and words as columns
+  cast_dtm(Name,word,n)
+
+#assign the source dataset to generic var names
+#so we can use a generic function per model
+#source_dtm <- dreamerWords_dtm_balanced
+#source_tidy <- dreamerWords_tidy
+
+# remove rows with no entry
+rowTotals <- apply(dreamerWords_dtm_balanced , 1, sum) #Find the sum of words in each Document
+source_dtm.new  <- dreamerWords_dtm_balanced[rowTotals> 0, ]           #remove all docs without words
+
+k <- 8 #number of topics
+seed = 1234 #necessary for reproducibility
+#fit the model passing the parameters discussed above
+#you could have more control parameters but will just use seed here
+lda <- LDA(source_dtm.new, k = k, method = "GIBBS", control = list(seed = seed))
+#examine the class of the LDA object
+class(lda)
+
+# lets convert the lda object in to tidy form, the beta indicates the probability
+top_terms_per_topic(lda,10)
