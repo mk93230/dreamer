@@ -18,4 +18,11 @@ fix.contractions <- function(doc) {
 # function to remove special characters
 removeSpecialChars <- function(x) gsub("[^a-zA-Z0-9 ]", " ", x)
 
+undesirable_words <- c("yeah", "baby", 
+                       "alright", "wanna", "gonna", "chorus", "verse", 
+                       "whoa", "gotta", "make", "miscellaneous", 
+                       "matic", " ai ", " ca ", " la ", "hey", " na ", 
+                       " da ", " uh ", " tin ", "  ll", "transcription",
+                       "repeats")
+
 
