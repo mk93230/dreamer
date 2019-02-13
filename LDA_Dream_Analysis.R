@@ -27,6 +27,7 @@ library(formattable) #color tile and color bar in `kables`
 library(tm) #text mining
 library(circlize) #to create circle visuals
 library(plotly) #interactive ggplot graphs
+library(lubridate) # for dates
 
 
 # Including other source files
@@ -43,7 +44,7 @@ my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00")
 # Capture all undesirable words from the dreamer
 
 undesirable_words <- c("told", "looked", "started", "dream", 
-                       "dreams", "completely","dreamed","ryan","left")
+                       "dreams", "completely","dreamed","left")
 
 #customize ggplot2's default theme settings
 #it's nice to have the options in this function
@@ -164,4 +165,4 @@ lda <- LDA(source_dtm.new, k = k, method = "GIBBS", control = list(seed = seed))
 class(lda)
 
 # lets convert the lda object in to tidy form, the beta indicates the probability
-top_terms_per_topic(lda,10)
+top_terms_per_topic(lda,30)
