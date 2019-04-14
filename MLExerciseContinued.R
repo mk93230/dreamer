@@ -2,6 +2,7 @@
 library(dslabs)
 library(dplyr)
 library(caret)
+library(tidyverse)
 # There are other ways through which we can avoid this situation.
 # Package for F1 score
 #install.packages("MLmetrics")
@@ -13,7 +14,7 @@ set.seed(2)
 test_index <- createDataPartition(y,times=1,p=0.5,list=FALSE)
 train_set <- heights %>% slice(-test_index)
 test_set <- heights %>% slice(test_index)
-# when we have ccategorical outcome, that y=1 for female and 0 for not a female (male)
+# when we have categorical outcome, that y=1 for female and 0 for not a female (male)
 # in this case we are looking for conditional probability which is probability of female
 # given the height
 # lets find the proportion of female who are 66 inches tall
@@ -66,3 +67,60 @@ F1_Score(test_set$sex,y_hat_logit,positive = NULL)
 F1_Score(test_set$sex,y_hat,positive = NULL)
 # as you can see logistics regression does better with F1 score, closer to 1 is better, 0 is
 # not good. F1 takes in account the right balance for precision and recall
+
+# Lets do the KNN for determining gender based on height. I don't think you need to change it
+# to binary, because this technique for category does not need conditional probability
+set.seed(1)
+knn_fit <-  knn3(sex~height,data=train_set,k=5)
+# For KNN you don't need p_hat
+y_hat_knn <- predict(knn_fit,test_set,type="class")
+confusionMatrix(y_hat_knn,reference = test_set$sex)
+F1_Score(test_set$sex,y_hat_knn,positive = NULL)
+
+# lets create a function to determine F1 score value for different Ks
+calculate_F1 <- function(x){
+  set.seed(1)
+  test_index <- createDataPartition(heights$height,times=1,p=0.5,list=FALSE)
+  train_set <- heights %>% slice(-test_index)
+  test_set <- heights %>% slice(test_index)
+  
+  knn_fit <-  knn3(sex~height,data=train_set,k=x)
+  # For KNN you don't need p_hat
+  y_hat_knn <- predict(knn_fit,test_set,type="class")
+  confusionMatrix(y_hat_knn,reference = test_set$sex)
+  F1_Score(test_set$sex,y_hat_knn,positive = NULL)
+  
+}
+
+k_value <- seq(1,100,2)
+result_F1 <- sapply(k_value,calculate_F1)
+k_f1_df <- data.frame(k_value,result_F1)
+k_f1_df %>% ggplot(aes(k_value,result_F1)) + geom_point()
+
+# assessment for KNN
+library(dslabs)
+library(caret)
+library(purrr)
+data("tissue_gene_expression")
+y <- tissue_gene_expression$y
+test_index <- createDataPartition(y,p=0.5,times=1,list=FALSE)
+train_set_x <- tissue_gene_expression$x[-test_index,]
+train_set_y <- tissue_gene_expression$y[-test_index]
+#train_set <- list(train_set_y,train_set_x)
+test_set_x <- tissue_gene_expression$x[test_index,]
+test_set_y <- tissue_gene_expression$y[test_index]
+ks <- seq(1,11,2)
+#accuracy <- map_df(ks,function(x) {
+    #test_set <- list(test_set_y,test_set_x)
+    # we will use the matrix approach for knn model
+    #print(x)
+    set.seed(1)
+    knn_fit <-  knn3(train_set_x,train_set_y,k=1)
+    # when using predict with knn, we can get probability values or outcome with maximum
+    # probability. By using type=class we will get outcomes
+    # you can see in the below function I used the input test dataset, which is what required
+    predict_knn <- predict(knn_fit,test_set_x,type="class")
+    # lets run the confusion matrix for accuracy
+    confusionMatrix(predict_knn,reference = test_set_y)
+#})
+    
