@@ -101,3 +101,82 @@ q75s <- replicate(B, {
 mean(q75s)
 sd(q75s)
 # The value matched with the above, change b=10 before running the above
+
+# Quadratic Discrimant analysis
+library(dslabs)
+library(tidyverse)
+data("mnist_27")
+mnist_27$train %>% group_by(y)
+
+
+# Generative models - LDA
+set.seed(1993)
+data("tissue_gene_expression")
+ind <- which(tissue_gene_expression$y %in% c("cerebellum", "hippocampus"))
+y <- droplevels(tissue_gene_expression$y[ind])
+x <- tissue_gene_expression$x[ind, ]
+x <- x[, sample(ncol(x), 10)]
+library(caret)
+train_lda <- train(x,y,method="lda",preProcess = "center")
+train_lda
+train_lda$finalModel$means
+class(train_lda$finalModel$means)
+dim(train_lda$finalModel$means)
+colnames(train_lda$finalModel$means)
+rownames(train_lda$finalModel$means)
+# converting matrix to a dataframe
+means_df <- as.data.frame(train_lda$finalModel$means)
+class(means_df)
+means_df
+
+# Generative models - QDA
+set.seed(1993)
+data("tissue_gene_expression")
+ind <- which(tissue_gene_expression$y %in% c("cerebellum", "hippocampus"))
+y <- droplevels(tissue_gene_expression$y[ind])
+x <- tissue_gene_expression$x[ind, ]
+x <- x[, sample(ncol(x), 10)]
+library(caret)
+train_qda <- train(x,y,method="qda")
+train_qda
+train_qda$finalModel$means
+
+# all tissue types - not just Cerebellum and hippocampus
+set.seed(1993)
+data("tissue_gene_expression")
+y <- tissue_gene_expression$y
+x <- tissue_gene_expression$x
+x <- x[, sample(ncol(x), 10)]
+library(caret)
+train_lda <- train(x,y,method="lda")
+train_lda
+
+# Decision tree and Forests
+library(rpart)
+n <- 1000
+sigma <- 0.25
+x <- rnorm(n, 0, 1)
+y <- 0.75 * x + rnorm(n, 0, sigma)
+dat <- data.frame(x = x, y = y)
+fit <- rpart(y ~ ., data = dat) # 4th choice
+
+# q2
+plot(fit,margin = 0.1)
+text(fit,cex=0.75) # ignore the value obtained, just look at the tree structure
+# as of 4/19/2019 it is the 4th choice
+
+# q3
+dat %>% 
+  mutate(y_hat = predict(fit)) %>% 
+  ggplot() +
+  geom_point(aes(x, y)) +
+  geom_step(aes(x, y_hat), col=2) # choice 1
+
+# q4
+library(randomForest)
+n <- 1000
+sigma <- 0.25
+x <- rnorm(n, 0, 1)
+y <- 0.75 * x + rnorm(n, 0, sigma)
+dat <- data.frame(x = x, y = y)
+fit <- randomForest(y ~ x, data = dat)

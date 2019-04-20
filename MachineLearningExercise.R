@@ -488,7 +488,7 @@ dat <- MASS::mvrnorm(n = 100, c(69, 69), Sigma) %>%
     test_index <- createDataPartition(y,p=0.5,times=1,list=FALSE)
     train_set <- heights %>% slice(-test_index)
     test_set <- heights %>% slice(test_index)
-# when we have ccategorical outcome, that y=1 for female and 0 for not a female (male)
+# when we have categorical outcome, that y=1 for female and 0 for not a female (male)
 # in this case we are looking for conditional probability which is probability of female
 # given the height
     # lets find the proportion of female who are 66 inches tall
