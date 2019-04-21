@@ -179,4 +179,114 @@ sigma <- 0.25
 x <- rnorm(n, 0, 1)
 y <- 0.75 * x + rnorm(n, 0, sigma)
 dat <- data.frame(x = x, y = y)
-fit <- randomForest(y ~ x, data = dat)
+fit <- randomForest(y ~ x, data = dat) # choice 1
+dat %>% 
+  mutate(y_hat = predict(fit)) %>% 
+  ggplot() +
+  geom_point(aes(x, y)) +
+  geom_step(aes(x, y_hat), col = 2)
+
+#q5
+plot(fit)
+
+#q6
+# nodesize is the minimum number of datapoints in a node
+# for max nodes - it is the maximum number of nodes in a tree
+# syntax is nodesize and maxnodes
+library(randomForest)
+n <- 1000
+sigma <- 0.25
+x <- rnorm(n, 0, 1)
+y <- 0.75 * x + rnorm(n, 0, sigma)
+dat <- data.frame(x = x, y = y)
+fit <- randomForest(y ~ x, data = dat, nodesize = 50, maxnodes = 25) # choice #4
+dat %>% 
+  mutate(y_hat = predict(fit)) %>% 
+  ggplot() +
+  geom_point(aes(x, y)) +
+  geom_step(aes(x, y_hat), col = 2)
+
+# tuning parameters
+getModelInfo("knn")
+modelLookup("knn")
+
+# install rborist package so that we can tune the minnode parameter
+#install.packages("Rborist")
+# Q1
+modelLookup("Rborist")
+library(Rborist)
+n <- 1000
+sigma <- 0.25
+x <- rnorm(n, 0, 1)
+y <- 0.75 * x + rnorm(n, 0, sigma)
+dat <- data.frame(x = x, y = y)
+#minNode <- seq(25, 100, 25)
+# the below grid is also a data frame with 2 parameters - which we found from model lookup for Rborist package
+gridRF <- expand.grid(minNode=seq(25,100,25),predFixed=0)
+set.seed(1)
+train_RF <- train(y ~ ., method = "Rborist", 
+                   data = dat,
+                   tuneGrid = gridRF)
+ggplot(train_RF,highlight = TRUE)
+
+
+# Q2
+library(caret)
+dat %>% 
+  mutate(y_hat = predict(train_RF)) %>% 
+  ggplot() +
+  geom_point(aes(x, y)) +
+  geom_step(aes(x, y_hat), col = 2) # choice 2 when I wrote this -4/20/2019
+
+# q3 - tissue generation dataset to determine the best complexity paramter (cp) to make the 
+# partition. For example 0.01 means if the residual sum of squares increases by 1% make a partition or something like this
+# all tissue types - not just Cerebellum and hippocampus
+library(caret)
+data("tissue_gene_expression")
+y <- tissue_gene_expression$y
+x <- tissue_gene_expression$x
+set.seed(1991)
+train_rpt <- train(x,y,method="rpart",tuneGrid =data.frame(cp=seq(0,0.1,0.01)))
+ggplot(train_rpt) # cp=0 is the answer
+train_rpt$finalModel
+# lets plot the tree
+plot(train_rpt$finalModel,margin = 0.1)
+text(train_rpt$finalModel,cex=0.75)
+train_rpt$finalModel$cptable
+
+#Q4
+confusionMatrix(train_rpt)
+# answer is 3rd option - Placenta samples are being classified somewhat evenly across tissues. correct
+#Q5
+library(caret)
+data("tissue_gene_expression")
+y <- tissue_gene_expression$y
+x <- tissue_gene_expression$x
+set.seed(1991)
+train_rpt <- train(x,y,method="rpart",control = rpart.control(minsplit = 0),tuneGrid =data.frame(cp=seq(0,0.1,0.01)))
+confusionMatrix(train_rpt)
+
+#q6 plotting the tree
+plot(train_rpt$finalModel,margin = 0.1)
+text(train_rpt$finalModel,cex=0.75)
+train_rpt$finalModel$cptable
+train_rpt$bestTune
+
+#q7 using the random forest and determine the predictors
+library(caret)
+data("tissue_gene_expression")
+y <- tissue_gene_expression$y
+x <- tissue_gene_expression$x
+set.seed(1991)
+# we will use mtry in this one, which is number of variable randomly sampled at each split
+# nodesize is the minimum size of the node
+fit<- train(x,y,method="rf",tuneGrid = data.frame(mtry=seq(50,200,25)),nodesize=1)
+ggplot(train_rft)
+
+#q8
+#varImp which is variable importance, determines the importance of the predictor
+# variable to the classification
+imp <- varImp(fit)
+imp
+#q9 For the imp value above, the below information is obtained
+# CFHR4 value is 35.03 and the rank is 7 as of April 20, 2019.
