@@ -57,8 +57,38 @@ colnames(x)
 # sample
 # even for 10000 rows it will take a long time so we may need to determine how long it would
 # take by changing number of rows and cross validations so that we can understand 
-control <- trainControl(method="cv", number=10, p=0.9)
-train_knn <- train(x[,col_index],y,method="knn", tuneGrid = data.frame(k=c(1,3,5,7)),trControl = control )
+# this model can run for a long time, to determine how long it could take lets create
+# a variable for number of rows and the number of cross validation. We can then determine
+# approximately how long it will run
+nrow(x)
+number_of_rows <- 10000
+index <- sample(nrow(x),number_of_rows)
+cv_no <- 10
+control <- trainControl(method="cv", number=cv_no, p=0.9)
+train_knn <- train(x[index,col_index],y[index],method="knn", tuneGrid = data.frame(k=c(1,3,5,7)),trControl = control )
+ggplot(train_knn)
+# Now lets create a model after we found the ideal K 
+knn_fit <- knn3(x[,col_index],y,k=3)
+# now lets run the knn_fit model against the test data to get the predicted Y
+y_hat_knn <- predict(knn_fit,x_test[,col_index],type="class")
+
+# lets see how accurate it is by executing the confusion matrix
+cm <- confusionMatrix(y_hat_knn,factor(y_test)) 
+cm$overall["Accuracy"]
+# lets display all the output classes's specificity and sensitivity
+cm$byClass[,1:2]
+
+# we can also build the model with random forest using rborist package. Because
+# it would take lot of time we will use 5 fold cross validation. Which means Randomly sample
+# will be picked which will contain 80% of the data and apply all the formula and do the same
+# 4 more times - i.e randomly selecting the data for train and test.
+control_rf <- trainControl(method = "cv", number = 5, p=0.8)
+# in the below command I believe the predFixed determines the number of predictors to be used
+grid <- expand.grid(minNode=c(1,5), predFixed=c(10,15,25,35,50))
+grid
+# lets create the output by training
+train_rf <- train(x[,col_index],y,method="Rborist",nTree=50,trControl = control_rf,tuneGrid = grid,
+                  nSamp=5000)
 
 # lets build a random forest
 library(randomForest)
