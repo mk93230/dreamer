@@ -65,3 +65,59 @@ y_ensemble
 cm_ensemble <- confusionMatrix(factor(y_ensemble),mnist_27$test$y)$overall["Accuracy"]
 cm_ensemble
 
+# Q5
+# Changes names for model_accuracy object
+names(model_accuracy) <- models
+names(model_accuracy)
+model_accuracy
+
+# eventhough the below display 0.84, the percentage expected from the course is 0.845,
+# some error in the course material, however use this to determine the model which got
+# accuracy more than 0.845 instead of 0.84. The answer is 1. 
+cm_ensemble
+
+#Lets find the accuracies for a model
+class(fits)
+# list all accuracies for 1st model
+fits[[1]]$results["Accuracy"]
+no_of_models
+cv_accuracy_results <- sapply(no_of_models,function(model_no)
+  {
+   fits[[model_no]]$results["Accuracy"]
+  
+  })
+class(cv_accuracy_results)
+min(cv_accuracy_results[[3]])
+# By default the train does cross validation and therefore some of the results have more than
+# one accuracy. We will take the min of the accuracy of there is more than one accuracy value.
+# we cannot take average of all the accuracy values for that model because the model does 
+# not provide that accuracy when ran with the data. Either min or max is appropriate because it
+# ran with those, To be conservative we will take the min, which says that it can atleast to this
+# accuracy or better. Lets find the min value for all model and average them.
+cv_accuracy_results_single <- sapply(no_of_models,function(model_no)
+  {
+    min(cv_accuracy_results[[model_no]])
+  })
+
+cv_accuracy_results_single
+mean(cv_accuracy_results_single)
+class(cv_accuracy_results_single)
+
+# to answer q7, lets remove alls the models which has value less than 0.80
+models_filtered_index <- which(cv_accuracy_results_single<0.80)
+models_filtered_index
+
+# lets remove colums from fits_predicts matrix
+fits_predicts_filtered <- fits_predicts[,-models_filtered_index]
+dim(fits_predicts_filtered)
+
+# now lets run the ensemble similar to the above
+
+no_of_rows <- 1:200
+y_ensemble_filtered <- sapply(no_of_rows,function(index)
+{
+  names(which.max(table(fits_predicts_filtered[index,])))
+})
+y_ensemble_filtered
+cm_ensemble_filtered <- confusionMatrix(factor(y_ensemble_filtered),mnist_27$test$y)$overall["Accuracy"]
+cm_ensemble_filtered
