@@ -39,3 +39,21 @@
 # The ratings provided by the contributor for a certian type of dreams emotions, with sleep type and checkin
 # must be taken in to consideration and provide similar ratings for others using the model. 
 # This is similar to movie ratings and recommendations.
+
+# Lets pick 10,000 rows for quick calculation
+dreams_df <- movielens[sample(nrow(movielens),10000),]
+
+colnames(dreams_df) <- c("dreamId","title","year","category","deviceId","rating","timestamp")
+head(dreams_df)
+
+# Dream description will be added to the data frame. Ratings on sleep and ratings on
+# check in will be added as well. Both these ratings will be self rated by the user.
+# The users rating others dream and their patterns of rating could be used to 
+# determine their own check-in - more pessismistic and or optimistic in their
+# self ratings - Little bit of Psychologist advise may be required here or we can 
+# until the data shows some pattern. Interestingly we can predict their self ratings
+# from how they rate others.
+# Are there benefit in reading others stories? hence dreams. Does it create the
+# sense of satisfaction in helping, realizing common experiences, diverting one
+# from their own issues, sense of virtual community, brining people together irrespective
+# of their background
