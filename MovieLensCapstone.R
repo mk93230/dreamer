@@ -1,4 +1,6 @@
-# Capstone Project - R version 3.6
+# R Version 3.6
+
+# @author Mahalingam Kamalahasan
 
 ###################################################################
 ################# LOADING THE REQUIRED PACKAGES ###################
@@ -44,3 +46,24 @@ RMSE <- function(actualrating, predictedrating)
 ###################################################################
 ####################### BUILDING THE MODEL ########################
 ###################################################################
+
+# Through analysis we can capture additional effects in addition to
+# calculating the average ratings of all movies
+
+# You can see some movies are rated more that the others, because some are popular,
+# blockbusters, critically acclaimed and etc. You can see them visually through the 
+# below plot
+edx %>% ggplot(aes(movieId,color="red")) + geom_histogram(binwidth = 5, color="green")
+
+# You can notice from the below histogram that not all users rate the 
+# same amount and some rate higher than the others
+edx %>% ggplot(aes(userId,color="red")) + geom_histogram(binwidth = 5, color="blue")
+
+############################BUILDING AN EQUATION ####################################
+
+# The above plots tell me that at the minimum to build a model that is effective to 
+# predict I need average of all movie ratins and add movie and user effect.
+
+# my 
+
+
