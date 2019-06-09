@@ -18,14 +18,14 @@ if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.
 ###################################################################
 # Loading edx, the rds file was downloaded from google drive and stored locally
 # The file was retreived from https://drive.google.com/drive/folders/1IZcBBX0OmL9wu9AdzMBFUG8GoPbGQ38D
-edx <- readRDS("./dataset/edx.rds")
+edx <- readRDS("../dataset/edx.rds")
 
 # running the dimension on edx to make sure I have correct number of rows and cols
 dim(edx) # rows: 9000055      cols: 6
 
 # Loading Validation dataset, the rds file was downloaded from google drive and stored locally
 # The file was retreived from https://drive.google.com/drive/folders/1IZcBBX0OmL9wu9AdzMBFUG8GoPbGQ38D
-validation <- readRDS("./dataset/validation.rds")
+validation <- readRDS("../dataset/validation.rds")
 
 # running the dimension on validation to make sure I have correct number of rows and cols
 dim(validation) # rows: 999999     cols: 6
@@ -99,6 +99,11 @@ bi %>% ggplot(aes(b_hat_i, color="movie effect")) + geom_histogram(bins=10,fill=
 # Apply the equation bu = y_hat_iu - mu - bi to the grouped data
 bu<-edx %>% left_join(bi,by="movieId") %>% group_by(userId) %>% summarize(bu_hat_u = mean(rating-mu-b_hat_i))
 
+# From the below histogram plot it is helpful to see the user effect, i.e some users
+# in general rate the movies they see optimistically than others. Some users more
+# pessimistic than others.
+bu %>% ggplot(aes(bu_hat_u, color="user effect")) + geom_histogram(bins=10,fill="brown")
+
 
 ############### Building the equation ################################
 ############## y_hat_iu = mu + bi + bu ###############################
@@ -114,6 +119,7 @@ y_hat_iu <- mu_plus_bi + validation %>% left_join(bu,by="userId")%>%.$bu_hat_u
 #####################################################################
 # Now lets calculate the RMSE for this new model with movie and user effect
 rmse_results <- RMSE(y_hat_iu,validation$rating) #0.8653488
+rmse_results
 
 ########################################################################
 ###########################RMSE RESULT: 0.8653488 ######################
