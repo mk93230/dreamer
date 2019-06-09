@@ -240,5 +240,9 @@ plot(pca$sdev)
 # There are few variables that have the most impact. Lets calculate the
 # cumulative sum
 var_explained <- cumsum(pca$sdev^2/sum(pca$sdev^2))
-View(var_explained)
 plot(var_explained)
+#View(var_explained)
+
+pcs <- pca$x
+View(pcs)
+pcs %>% select()
