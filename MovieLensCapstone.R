@@ -60,7 +60,6 @@ edx %>% ggplot(aes(movieId,color="red")) + geom_histogram(binwidth = 5, color="g
 edx %>% ggplot(aes(userId,color="red")) + geom_histogram(binwidth = 5, color="blue")
 
 ############################BUILDING AN EQUATION ####################################
-
 # The above plots tell me that at the minimum to build a model that is effective to 
 # predict I need average of all movie ratins and add movie and user effect.
 
