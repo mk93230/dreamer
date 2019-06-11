@@ -85,7 +85,7 @@ test_output <- wine_test_set %>% select(Type) %>% .$Type
 cv_no <- 5
 control <- trainControl(method="cv", number=cv_no, p=0.9)
 
-train_knn <- train(test_input_features,train_output,method="knn", tuneGrid = data.frame(k=c(1,3,4,5,7)),trControl = control )
+train_knn <- train(wine_train_set,train_output,method="knn", tuneGrid = data.frame(k=c(1,3,4,5,7)),trControl = control )
 ggplot(train_knn)
 
 # From the above ggplot,
