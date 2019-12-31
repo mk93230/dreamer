@@ -50,12 +50,24 @@ head(dreams_df)
 # Dream description will be added to the data frame. Ratings on sleep and ratings on
 # check in will be added as well. Both these ratings will be self rated by the user.
 # At some point the ratings for sleep can be attained from the monitoring device
-# The users rating others dream and their patterns of rating could be used to 
-# determine their own check-in - more pessismistic and or optimistic in their
-# self ratings - Little bit of Psychologist advise may be required here or we can 
+# We can ask the users in the checkin if we show a scenario on a person
+# how would they perceive, more pessimistic or optimistic. This will help 
+# us to determine the personality type.The users rating others dream and their patterns of rating could be used to 
+# determine their own check-in -  Little bit of Psychologist advise may be required here or we can 
 # until the data shows some pattern. Interestingly we can predict their self ratings
 # from how they rate others.
-# Are there benefit in reading others stories? hence dreams. Does it create the
-# sense of satisfaction in helping, realizing common experiences, diverting one
-# from their own issues, sense of virtual community, brining people together irrespective
-# of their background
+
+
+# We should have a determine period, lets says weekly report on dreams, checkin
+# and sleep quality. We can come up with a factor for each one.
+
+# Weekly dreams should have a value anywhere between -0.33 to + 0.33 - di
+# Weekly checkin should have a value anywhere between -0.33 to + 0.33 - ci
+# Weekly sleep quality should have a value anywhere between -0.33 to +0.33 - si
+
+# the multiplication factor mf = di + ci + si. The maximum mf is ~1 (0.99) 
+# and minimum is ~-1 (0.99)
+
+######## Calculating the factor score for dreams ###################
+# Weekly dreams can be processed to identify certain defined events
+# Each dreams will be run through Natural Language Processing ...continue tomorrow
