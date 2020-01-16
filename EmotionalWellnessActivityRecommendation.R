@@ -3,12 +3,20 @@
 # The concept is to tap in to conscious (regular check-ins), subconscious triggers (sleeping patterns)
 # and unconscious behavior of one's mind.
 
+<<<<<<< HEAD
 # The goal is to share this anonymous data to a another user and 
 # obtain the next best activities that this other user will provide 
 # to the experiencing user.
 
 # We will call the data obtained from the user as "wellness seeker" 
 #and the user who is providing the next best actions as the "contributor"
+=======
+# The goal is to share this anonymous data to a another user and obtain the next best activities
+# that this other user will provide to the experiencing user.
+
+# We will call the data obtained from the user as "wellness seeker" and the user who is 
+# providing the next best actions as the "contributor"
+>>>>>>> a96ad0b088ce2f71b64bd5770ec30d520f634322
 
 # The contributors could be wellness seekers themselves and or providers. For building this
 # model we will keep providers out of scope.
@@ -29,7 +37,11 @@
 #                            Get support (Prayers, Psychiatrist, family&friends, dream interpretation)
 
 # So the net result of this assessment is that the user of the device would get ratings from 
+<<<<<<< HEAD
 # many contributors on a specific instance of their state (conscious, subconscious and unconscious states)
+=======
+# many users on a specific instance of their state (conscious, subconscious and unconscious states)
+>>>>>>> a96ad0b088ce2f71b64bd5770ec30d520f634322
 # For the ratings the average rating can be obtained. For the next best action, the top most popular
 # votes can be picked up. 
 
@@ -49,7 +61,10 @@ head(dreams_df)
 
 # Dream description will be added to the data frame. Ratings on sleep and ratings on
 # check in will be added as well. Both these ratings will be self rated by the user.
+<<<<<<< HEAD
 # At some point the ratings for sleep can be attained from the monitoring device
+=======
+>>>>>>> a96ad0b088ce2f71b64bd5770ec30d520f634322
 # The users rating others dream and their patterns of rating could be used to 
 # determine their own check-in - more pessismistic and or optimistic in their
 # self ratings - Little bit of Psychologist advise may be required here or we can 

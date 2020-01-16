@@ -75,7 +75,11 @@ as.factor(movielens$userId)
 # from the equation y_hat_i = mu_hat + b_i where i represents movie i.
 # One of the approaches is to calculate the b_i by taking the average/mean of ratings
 # of movie i and subtracting that from the mean/average of all movie ratings.
+<<<<<<< HEAD
 # i.e b_i = mu_hat - y_hat_i. I would like to think it as mu_hat_i - mu_hat. By saying 
+=======
+# i.e b_i = mu_hat_i - y_hat_i. I would like to think it as mu_hat_i - mu_hat. By saying 
+>>>>>>> a96ad0b088ce2f71b64bd5770ec30d520f634322
 # y_hat_i you are not ingnoring any other additional effects.
 
 head(train_set)
@@ -124,7 +128,11 @@ train_set %>% semi_join(userId_occurence_df_cond,by="userId")%>%group_by(userId)
 # We have already calculated the average ratings for all movies in the trainset
 # and we called them as mu_hat. We then calculated the b_i_hat by subtracting the 
 # average rating for a movie. We did that by subtracting mu_hat from mu_i_hat.
+<<<<<<< HEAD
 # To calculate the b_u_hat (the user effect) we will subtract the rating from that user from 
+=======
+# To calculate the b_u_hat (the user effect) we will subtract the rating from thet user from 
+>>>>>>> a96ad0b088ce2f71b64bd5770ec30d520f634322
 # mu_hat and b_i_hat and take the average of it. I.e rating_u-mu_hat-b_u_hat
 
 #View(b_hats) # contains movie id and b_i_hat
@@ -240,9 +248,14 @@ plot(pca$sdev)
 # There are few variables that have the most impact. Lets calculate the
 # cumulative sum
 var_explained <- cumsum(pca$sdev^2/sum(pca$sdev^2))
+<<<<<<< HEAD
 plot(var_explained)
 #View(var_explained)
 
 pcs <- pca$x
 View(pcs)
 pcs %>% select()
+=======
+View(var_explained)
+plot(var_explained)
+>>>>>>> a96ad0b088ce2f71b64bd5770ec30d520f634322

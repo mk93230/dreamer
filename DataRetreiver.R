@@ -9,6 +9,3 @@ ExtractDreams <- function(){
   return(DreamExtract)
 }
 
-
-
-
