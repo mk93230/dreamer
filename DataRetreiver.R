@@ -8,4 +8,3 @@ ExtractDreams <- function(){
   #DreamExtractList <- DreamExtractList[-1]
   return(DreamExtract)
 }
-
