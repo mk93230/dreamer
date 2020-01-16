@@ -6,7 +6,6 @@ if(!require(wordcloud2)) install.packages("wordcloud2")
 if(!require(readr)) install.packages("readr")
 
 #load libraries
-
 library(readr)
 library(knitr)
 library(tidyverse)
