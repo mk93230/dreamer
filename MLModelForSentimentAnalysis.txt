@@ -1,0 +1,10 @@
+# In our case, each dream from the user will be considered as a document (source), and genre will be nothing but the emotions/sentiments category.
+# So we should have a column for emotions and categorize them as "sad", "depressed", "happy" "neutral", etc
+# please refer to this article for 25 different types of emotions - https://kids.frontiersin.org/article/10.3389/frym.2018.00015
+#↑ Maaten, L. V. D., and Hinton, G. 2008. Visualizing data using t-SNE. J. Mach. Learn. Res. 9, 2579–2605.
+# Paper reference for mathematical technique http://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf
+
+# anxiety and depression are mood disorders. Because of this their emotions on different things could vary.
+# Emotions are short-lived feelings that come from a known cause, 
+# while moods are feelings that are longer lasting than emotions and have no clear starting point of formation. 
+# Emotions can range from happy, ecstatic, sad and prideful, while moods are either positive or negative.
