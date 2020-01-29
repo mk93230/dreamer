@@ -6,7 +6,7 @@ if(!require(tidytext)) install.packages("tidytext")
 if(!require(mlr)) install.packages("mlr")
 if(!require(kableExtra)) install.packages("kableExtra")
 if(!require(readr)) install.packages("readr")
-
+if(!require(circlize)) install.packages("circlize")
 
 
 library(lubridate) # to deal with dates little bit more easily
@@ -15,6 +15,7 @@ library(tidytext) #unnesting text into single words
 library(mlr) #machine learning framework for R
 library(kableExtra) #create attractive tables
 library(readr) # library for reading CSV file
+library(circlize) # cool circle plots
 
 
 #define some colors to use throughout
@@ -56,4 +57,34 @@ emotions_data_test_tidy <- emotions_data_test_balanced %>% unnest_tokens(word,te
   anti_join(stop_words)
 #View(emotions_data_test_tidy)
 
+######### Examining the data and associating the journal to emotions ############
+# We will group the user by emotions and see the emotions exhibited by the user ####
 
+# Validation Data
+emotions_data_validation_balanced %>% group_by(emotions,user) %>%
+  summarise(journal_count = n()) %>%
+  my_kable_styling("Training Dataset")
+
+# Test Data
+emotions_data_test_balanced %>% group_by(emotions,user) %>% 
+  summarise(journal_count = n()) %>%
+  my_kable_styling("Test Dataset")
+
+# Lets use the circular layout and use the chord to see the emotions of the users
+emotions_chart <- emotions_data_validation_balanced %>% count(emotions, user)
+#View(test)
+
+circos.clear() # very important! Reset the circular layout parameters
+
+#assign chord colors
+
+grid.col = c("Joy" = my_colors[1], "Sadness" = my_colors[2],
+             "Anger" = my_colors[5], "Disgust" = my_colors[3],
+             "Fear" = my_colors[4])
+
+# set the global parameters for the circular layout. Specifically the gap size
+circos.par(gap.after = c(rep(5, length(unique(emotions_chart[[1]])) - 1), 15,
+                         rep(5, length(unique(emotions_chart[[2]])) - 1), 15))
+
+chordDiagram(emotions_chart, grid.col = grid.col, transparency = .2)
+title("Relationship Between Emotions and User")
