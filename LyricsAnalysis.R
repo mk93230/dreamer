@@ -49,6 +49,10 @@ emotions_data_validation_tidy <- emotions_data_validation_balanced %>% unnest_to
 emotions_data_test_balanced <- read_csv("data/emotions_data_test.csv")
 #View(emotions_data_test_balanced)
 
+############## Loading Explicit words ############################
+#very small file that has a couple of words that help to identify certain genres
+explicit_words <- read_csv("data/explicit_words.csv")
+
 # Now we will take each text, which could be multiple sentences and split them to words
 # so that we get separate row for each work, we will also remove words that are called
 # as stop words i.e I, he, she, I'll etc.
@@ -137,3 +141,58 @@ fear_words <- lapply(top_words[top_words$emotions == "Fear",], as.character)
 joy_words <- lapply(top_words[top_words$emotions == "Joy",], as.character)
 sadness_words <- lapply(top_words[top_words$emotions == "Sadness",], as.character)
 
+
+# We will write a function for features engineering. Adding weightage to the words
+# The below function is self explanatory
+# Also in the below function I used encodeString function to encode special
+# characters in the title description text.
+
+features_func_emotions <- function(data) {
+  features <- data %>%
+    group_by(title) %>%
+    mutate(word_frequency = n(),
+           lexical_diversity = n_distinct(word),
+           lexical_density = lexical_diversity/word_frequency,
+           repetition = word_frequency/lexical_diversity,
+           title_text_avg_word_length = mean(nchar(word)),
+           title_word_count = lengths(gregexpr("[A-z]\\W+",
+                                               title)) + 1L,
+           title_length = nchar(encodeString(title)),
+           large_word_count =
+             sum(ifelse((nchar(word) > 7), 1, 0)),
+           small_word_count =
+             sum(ifelse((nchar(word) < 3), 1, 0)),
+           #assign more weight to these words using "10" below
+           explicit_word_count =
+             sum(ifelse(word %in% explicit_words$explicit_word,10,0)),
+           #assign more weight to these words using "20" below
+           # for anger for example I used the weightage of more than 1 if for
+           # some reason we can determine clearly if those words have more
+           # weightage. See the sum function in comment, but it is for the 
+           # future purpose for now I am using the same weightage as for 
+           # others
+           anger_word_count =
+             #sum(ifelse(word %in% anger_words$top_word,20,0)),
+             sum(ifelse(word %in% anger_words$top_word,1,0)),
+           disgust_word_count =
+             sum(ifelse(word %in% disgust_words$top_word,1,0)),
+           fear_word_count =
+             sum(ifelse(word %in% fear_words$top_word,1,0)),
+           joy_word_count =
+             sum(ifelse(word %in% joy_words$top_word,1,0)),
+           sadness_word_count =
+             sum(ifelse(word %in% sadness_words$top_word,1,0))
+    ) %>%
+    select(-word) %>%
+    distinct() %>% #to obtain one record per title
+    ungroup()
+  
+  features$emotions <- as.factor(features$emotions)
+  return(features)
+}
+
+########### Creating the final training and test dataset #####################
+##############################################################################
+
+train <- features_func_emotions(emotions_data_validation_tidy)
+test  <- features_func_emotions(emotions_data_test_tidy)
