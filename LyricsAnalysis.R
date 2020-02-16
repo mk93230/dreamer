@@ -70,21 +70,70 @@ emotions_data_test_balanced %>% group_by(emotions,user) %>%
   summarise(journal_count = n()) %>%
   my_kable_styling("Test Dataset")
 
+############################################################################
+###### The below is to create chord diagram that ties user to the emotions
+###### To see the chord diagram uncomment line 76 thru 93 ######
+###### Anything that is double commented (##) can stay commented
 # Lets use the circular layout and use the chord to see the emotions of the users
-emotions_chart <- emotions_data_validation_balanced %>% count(emotions, user)
-#View(test)
+#emotions_chart <- emotions_data_validation_balanced %>% count(emotions, user)
+##View(test)
 
-circos.clear() # very important! Reset the circular layout parameters
+#circos.clear() # very important! Reset the circular layout parameters
 
-#assign chord colors
+##assign chord colors
 
-grid.col = c("Joy" = my_colors[1], "Sadness" = my_colors[2],
-             "Anger" = my_colors[5], "Disgust" = my_colors[3],
-             "Fear" = my_colors[4])
+#grid.col = c("Joy" = my_colors[1], "Sadness" = my_colors[2],
+#             "Anger" = my_colors[5], "Disgust" = my_colors[3],
+#             "Fear" = my_colors[4])
 
-# set the global parameters for the circular layout. Specifically the gap size
-circos.par(gap.after = c(rep(5, length(unique(emotions_chart[[1]])) - 1), 15,
-                         rep(5, length(unique(emotions_chart[[2]])) - 1), 15))
+## set the global parameters for the circular layout. Specifically the gap size
+#circos.par(gap.after = c(rep(5, length(unique(emotions_chart[[1]])) - 1), 15,
+#                         rep(5, length(unique(emotions_chart[[2]])) - 1), 15))
 
-chordDiagram(emotions_chart, grid.col = grid.col, transparency = .2)
-title("Relationship Between Emotions and User")
+#chordDiagram(emotions_chart, grid.col = grid.col, transparency = .2)
+#title("Relationship Between Emotions and User")
+
+##############################################################################
+################ Feature Engineering #########################################
+##############################################################################
+
+# We will ask the operations team to classify each journals emotions to the best
+# of their knowledge. Once the sample user journals are classified we can then
+# look at the words that are part of the journal that could contribute to that
+# emotion. We can then take n number of top words that can contribute to the
+# classified emotion. Some of the common words that can be see across emotions
+# can be removed. This type of engineering is based on the content (not context)
+
+#play with this number until you get the best results for your model.
+number_of_words = 5500
+
+top_words_per_emotion <- emotions_data_validation_tidy %>%
+  group_by(emotions) %>%
+  mutate(emotions_word_count = n()) %>%
+  group_by(emotions,word) %>% 
+  #note that the percentage is also collected, when really you
+  #could have just used the count, but it's good practice to use a %
+  mutate(word_count = n(),
+         word_pct = word_count / emotions_word_count * 100) %>%
+  select(word, emotions, emotions_word_count, word_count, word_pct) %>%
+  distinct() %>%
+  ungroup() %>%
+  arrange(desc(word_pct)) %>%
+  top_n(number_of_words) %>%
+  select(emotions, word, word_pct)
+
+#remove words that are in more than one genre
+top_words <- top_words_per_emotion %>%
+  ungroup() %>%
+  group_by(word) %>%
+  mutate(multi_emotions = n()) %>%
+  filter(multi_emotions < 2) %>%
+  select(emotions, top_word = word)
+
+# We will now collect top words for each emotion category
+anger_words <- lapply(top_words[top_words$emotions == "Anger",], as.character)
+disgust_words <- lapply(top_words[top_words$emotions == "Disgust",], as.character)
+fear_words <- lapply(top_words[top_words$emotions == "Fear",], as.character)
+joy_words <- lapply(top_words[top_words$emotions == "Joy",], as.character)
+sadness_words <- lapply(top_words[top_words$emotions == "Sadness",], as.character)
+
