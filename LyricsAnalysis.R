@@ -276,3 +276,7 @@ bmr <- benchmark(lrns, task_train_subset, rdesc, meas, show.info = FALSE)
 #I'm just accessing an aggregated result directly so you can see
 #the object structure and so I can use the result in markdown narrative
 rf_perf <- round(bmr$results$`Users Feature Subset`$`Random Forest`$aggr[[1]],2) * 100
+
+## [1] "BenchmarkResult"
+#class(bmr)
+bmr
