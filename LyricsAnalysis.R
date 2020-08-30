@@ -280,3 +280,5 @@ rf_perf <- round(bmr$results$`Users Feature Subset`$`Random Forest`$aggr[[1]],2)
 ## [1] "BenchmarkResult"
 #class(bmr)
 bmr
+# Looking at the above performance result it is very clear that random forest does 
+# well to determine emotions.
